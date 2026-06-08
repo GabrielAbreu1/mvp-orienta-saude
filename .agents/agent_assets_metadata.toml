@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "bnexttNMv4mGVZPLP56ws"
+uri = "file://orienta-saude.tar.gz"
+type = "unspecified"
+title = "Orienta Saúde — código-fonte completo"

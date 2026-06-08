@@ -1,0 +1,13 @@
+{
+  "name": "@workspace/triagem-schemas",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@workspace/triagem-domain": "workspace:*",
+    "zod": "catalog:"
+  }
+}

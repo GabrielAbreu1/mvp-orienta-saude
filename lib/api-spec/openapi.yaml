@@ -1,0 +1,325 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: triagem
+    description: Triagem educativa de saúde
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /perguntas:
+    post:
+      operationId: gerarPerguntas
+      tags: [triagem]
+      summary: Gera perguntas clínicas de aprofundamento
+      description: >
+        Recebe sintomas e regiões selecionadas e retorna 3-7 perguntas estruturadas geradas pela IA.
+        Antes de chamar a IA, roda o red flag check determinístico — se positivo, retorna a flag e perguntas vazias.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PerguntasInput"
+      responses:
+        "200":
+          description: Perguntas geradas (ou red flag detectado)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PerguntasResponse"
+        "400":
+          description: Entrada inválida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limit excedido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /analisar:
+    post:
+      operationId: analisarTriagem
+      tags: [triagem]
+      summary: Análise final da entrevista
+      description: >
+        Recebe todos os dados coletados e retorna a análise com nível de urgência, especialidade,
+        hipóteses e orientações. Red flag determinístico sempre vence eventual divergência da IA.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalisarInput"
+      responses:
+        "200":
+          description: Análise concluída
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnaliseResponse"
+        "400":
+          description: Entrada inválida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limit excedido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "503":
+          description: IA indisponível e sem fallback aplicável
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /feedback:
+    post:
+      operationId: enviarFeedback
+      tags: [triagem]
+      summary: Feedback educativo do usuário sobre a orientação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackInput"
+      responses:
+        "204":
+          description: Recebido
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ApiError:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+        retryAfterSeconds:
+          type: ["integer", "null"]
+
+    Paciente:
+      type: object
+      required: [idade, sexo]
+      properties:
+        idade:
+          type: integer
+          minimum: 18
+          maximum: 120
+        sexo:
+          type: string
+          enum: [masculino_cis, masculino_trans, feminino_cis, feminino_trans, outro, nao_informado]
+        condicoesCronicas:
+          type: string
+          maxLength: 500
+
+    PerguntasInput:
+      type: object
+      required: [paciente, sintomasSelecionados, regioesSelecionadas]
+      properties:
+        paciente:
+          $ref: "#/components/schemas/Paciente"
+        sintomasSelecionados:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items: { type: string, minLength: 1, maxLength: 50 }
+        regioesSelecionadas:
+          type: array
+          maxItems: 10
+          items: { type: string, minLength: 1, maxLength: 50 }
+
+    Pergunta:
+      type: object
+      required: [id, pergunta, tipo]
+      properties:
+        id: { type: string, minLength: 1, maxLength: 50 }
+        pergunta: { type: string, minLength: 5, maxLength: 300 }
+        tipo:
+          type: string
+          enum: [escala, opcoes]
+        opcoes:
+          type: array
+          maxItems: 12
+          items: { type: string, maxLength: 100 }
+
+    RedFlagData:
+      type: object
+      required: [level, message, action, emergencyNumber]
+      properties:
+        level:
+          type: string
+          enum: [medium, high, emergency]
+        message: { type: string }
+        action: { type: string }
+        emergencyNumber: { type: string }
+
+    PerguntasResponse:
+      type: object
+      required: [perguntas, fallback]
+      properties:
+        perguntas:
+          type: array
+          maxItems: 7
+          items: { $ref: "#/components/schemas/Pergunta" }
+        fallback: { type: boolean }
+        redFlag:
+          oneOf:
+            - $ref: "#/components/schemas/RedFlagData"
+            - type: "null"
+
+    Resposta:
+      type: object
+      required: [perguntaId, valor]
+      properties:
+        perguntaId: { type: string, minLength: 1, maxLength: 50 }
+        valor: { type: string, maxLength: 200 }
+
+    AnalisarInput:
+      type: object
+      required:
+        - paciente
+        - sintomasSelecionados
+        - regioesSelecionadas
+        - duracao
+        - intensidade
+        - progressao
+        - respostas
+      properties:
+        paciente:
+          $ref: "#/components/schemas/Paciente"
+        sintomasSelecionados:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items: { type: string, minLength: 1, maxLength: 50 }
+        regioesSelecionadas:
+          type: array
+          maxItems: 10
+          items: { type: string, minLength: 1, maxLength: 50 }
+        duracao: { type: string, minLength: 1, maxLength: 60 }
+        intensidade:
+          type: integer
+          minimum: 0
+          maximum: 10
+        progressao:
+          type: string
+          enum: [piorando, melhorando, estavel]
+        tipoDor:
+          oneOf:
+            - type: string
+              enum: [continua, intermitente]
+            - type: "null"
+        temFebre:
+          type: ["boolean", "null"]
+        respostas:
+          type: array
+          maxItems: 10
+          items: { $ref: "#/components/schemas/Resposta" }
+
+    Hipotese:
+      type: object
+      required: [nome, relevancia, descricao]
+      properties:
+        nome: { type: string, minLength: 1, maxLength: 120 }
+        relevancia:
+          type: string
+          enum: [alta, media, baixa]
+        descricao: { type: string, minLength: 1, maxLength: 400 }
+
+    Especialidade:
+      type: object
+      required: [principal, justificativa]
+      properties:
+        principal: { type: string, minLength: 1, maxLength: 80 }
+        secundaria: { type: string, maxLength: 80 }
+        justificativa: { type: string, minLength: 1, maxLength: 300 }
+
+    AnaliseResponse:
+      type: object
+      required:
+        - source
+        - riskLevel
+        - confidence
+        - hipoteses
+        - especialidade
+        - orientacoesGerais
+        - dadosInsuficientes
+        - avisoLegal
+      properties:
+        source:
+          type: string
+          enum: [rule_engine, ai]
+        riskLevel:
+          type: string
+          enum: [low, medium, high, emergency]
+        confidence:
+          type: string
+          enum: [low, medium, high]
+        hipoteses:
+          type: array
+          maxItems: 5
+          items: { $ref: "#/components/schemas/Hipotese" }
+        especialidade:
+          $ref: "#/components/schemas/Especialidade"
+        orientacoesGerais:
+          type: array
+          minItems: 1
+          maxItems: 5
+          items: { type: string, minLength: 1, maxLength: 300 }
+        dadosInsuficientes: { type: boolean }
+        avisoLegal: { type: string, minLength: 1, maxLength: 300 }
+        redFlag:
+          oneOf:
+            - $ref: "#/components/schemas/RedFlagData"
+            - type: "null"
+
+    FeedbackInput:
+      type: object
+      required: [estrelas, util]
+      properties:
+        estrelas:
+          type: integer
+          minimum: 1
+          maximum: 5
+        util: { type: boolean }
+        comentario: { type: string, maxLength: 500 }
+        riskLevel:
+          type: string
+          enum: [low, medium, high, emergency]
+        especialidade: { type: string, maxLength: 80 }
+        source:
+          type: string
+          enum: [rule_engine, ai]
