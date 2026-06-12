@@ -5,4 +5,10 @@ generated = []
 id = "bnexttNMv4mGVZPLP56ws"
 uri = "file://orienta-saude.tar.gz"
 type = "unspecified"
-title = "Orienta Saúde — código-fonte completo"
+title = "Orienta Saúde — versão atualizada (.tar.gz)"
+
+[[outputs]]
+id = "6cOcvBHE5b5eBNXOB1BGU"
+uri = "file://orienta-saude.zip"
+type = "unspecified"
+title = "Orienta Saúde — código-fonte (.zip)"
