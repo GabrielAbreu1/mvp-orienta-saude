@@ -197,11 +197,19 @@ export default function Landing() {
             </div>
             <span className="text-xs text-[#a0aec0]">© {new Date().getFullYear()} Projeto de extensão universitária.</span>
           </div>
-          <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-[#e2e8f0] shadow-sm">
-            <div className="w-8 h-8 bg-[#2e8b57]/10 rounded-lg flex items-center justify-center">
-              <span className="text-[#2e8b57] font-bold text-xs">ODS</span>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/stats"
+              className="text-sm text-[#718096] hover:text-[#0056b3] transition-colors"
+            >
+              Ver feedbacks
+            </Link>
+            <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-[#e2e8f0] shadow-sm">
+              <div className="w-8 h-8 bg-[#2e8b57]/10 rounded-lg flex items-center justify-center">
+                <span className="text-[#2e8b57] font-bold text-xs">ODS</span>
+              </div>
+              <p className="text-[#4A5568] text-sm font-medium">Alinhado à ODS 3 — Saúde e Bem-Estar</p>
             </div>
-            <p className="text-[#4A5568] text-sm font-medium">Alinhado à ODS 3 — Saúde e Bem-Estar</p>
           </div>
         </div>
       </footer>
