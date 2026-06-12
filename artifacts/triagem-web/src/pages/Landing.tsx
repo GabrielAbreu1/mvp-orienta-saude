@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import {
   ShieldCheck,
   Stethoscope,
@@ -15,7 +16,43 @@ import {
   Gauge,
   Sparkles,
   Lock,
+  Star,
 } from "lucide-react";
+
+interface Highlight {
+  comentario: string | null;
+  estrelas: number;
+  util: boolean;
+  data: string;
+}
+
+function TestimonialCard({ highlight }: { highlight: Highlight }) {
+  return (
+    <div className="bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-sm flex flex-col gap-4 text-left">
+      <div className="flex gap-0.5">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <Star
+            key={n}
+            className={`w-4 h-4 ${
+              n <= highlight.estrelas
+                ? "text-[#f59e0b] fill-[#f59e0b]"
+                : "text-[#e2e8f0]"
+            }`}
+          />
+        ))}
+      </div>
+      <p className="text-[#2D3748] text-sm leading-relaxed flex-1">
+        "{highlight.comentario}"
+      </p>
+      <span className="text-xs text-[#a0aec0]">
+        {new Date(highlight.data).toLocaleDateString("pt-BR", {
+          month: "long",
+          year: "numeric",
+        })}
+      </span>
+    </div>
+  );
+}
 
 const STEPS = [
   { icon: ShieldCheck, title: "Consentimento LGPD", desc: "Você lê os termos e autoriza o uso educativo. Nada clínico é armazenado." },
@@ -27,6 +64,18 @@ const STEPS = [
 ] as const;
 
 export default function Landing() {
+  const { data: highlights } = useQuery<Highlight[]>({
+    queryKey: ["feedbacks-highlights"],
+    queryFn: async () => {
+      const res = await fetch("/api/feedbacks/highlights");
+      if (!res.ok) throw new Error();
+      return res.json();
+    },
+    staleTime: 5 * 60_000,
+  });
+
+  const visibleHighlights = (highlights ?? []).slice(0, 3);
+
   return (
     <div className="min-h-screen bg-white text-[#2D3748] font-['Open_Sans'] antialiased overflow-x-hidden">
       <header className="py-6 px-6 md:px-12 flex justify-between items-center max-w-6xl mx-auto">
@@ -171,6 +220,35 @@ export default function Landing() {
             </div>
           </div>
         </section>
+
+        {visibleHighlights.length > 0 && (
+          <section className="mt-20 pt-12 border-t border-[#e2e8f0]">
+            <div className="flex flex-col items-center text-center mb-10">
+              <span className="text-xs font-bold tracking-widest text-[#2e8b57] uppercase mb-3">Depoimentos</span>
+              <h2 className="font-['Inter'] text-3xl md:text-4xl font-bold text-[#1A202C] mb-3 tracking-tight">
+                O que dizem os usuários
+              </h2>
+              <p className="text-[#4A5568] text-base max-w-lg leading-relaxed">
+                Avaliações reais e anônimas de quem usou o Orienta Saúde.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-5">
+              {visibleHighlights.map((h, i) => (
+                <TestimonialCard key={i} highlight={h} />
+              ))}
+            </div>
+
+            <div className="mt-8 text-center">
+              <Link
+                href="/stats"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-[#0056b3] hover:underline"
+              >
+                Ver todos os feedbacks <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </section>
+        )}
 
         <section id="sobre" className="mt-20 pt-12 border-t border-[#e2e8f0]">
           <div className="grid md:grid-cols-[auto,1fr] gap-6 items-start text-left bg-[#f8f9fa] rounded-3xl p-6 md:p-8 border border-[#e2e8f0]/80">

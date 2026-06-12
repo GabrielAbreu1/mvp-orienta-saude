@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from "express";
-import { count, avg, isNotNull, desc, sql } from "drizzle-orm";
+import { count, avg, isNotNull, desc, sql, gte, and } from "drizzle-orm";
 import { FeedbackSchema } from "@workspace/triagem-schemas";
 import { db, feedbacksTable } from "@workspace/db";
 import { logTechnical } from "./gemini-helper.js";
@@ -55,6 +55,42 @@ feedbackRouter.post(
     });
 
     res.status(204).end();
+  },
+);
+
+feedbackRouter.get(
+  "/feedbacks/highlights",
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const highlights = await db
+        .select({
+          comentario: feedbacksTable.comentario,
+          estrelas: feedbacksTable.estrelas,
+          util: feedbacksTable.util,
+          createdAt: feedbacksTable.createdAt,
+        })
+        .from(feedbacksTable)
+        .where(
+          and(
+            isNotNull(feedbacksTable.comentario),
+            gte(feedbacksTable.estrelas, 4),
+          ),
+        )
+        .orderBy(desc(feedbacksTable.estrelas), desc(feedbacksTable.createdAt))
+        .limit(6);
+
+      res.json(
+        highlights.map((h) => ({
+          comentario: h.comentario,
+          estrelas: h.estrelas,
+          util: h.util,
+          data: h.createdAt,
+        })),
+      );
+    } catch (err) {
+      req.log.error({ err }, "highlights_query_failed");
+      res.status(500).json({ error: "Não foi possível carregar os destaques." });
+    }
   },
 );
 
