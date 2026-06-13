@@ -1,8 +1,5 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 
-// Geração de imagens só funciona com o proxy do Replit.
-// Fora do Replit, as chamadas a generateImage lançarão erro em runtime,
-// mas não travam o startup do servidor.
 function getImageAI() {
   const apiKey = process.env.AI_INTEGRATIONS_GEMINI_API_KEY ?? process.env.GEMINI_API_KEY;
   const baseUrl = process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
