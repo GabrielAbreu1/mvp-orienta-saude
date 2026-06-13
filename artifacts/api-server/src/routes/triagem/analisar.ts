@@ -112,6 +112,86 @@ Retorne APENAS este JSON:
 }`;
 }
 
+/** Retorna orientação determinística quando a IA falha. Nunca retorna 503. */
+function buildDeterministicFallback(
+  risk: RiskLevel,
+  flag: ReturnType<typeof checkRedFlags>,
+): {
+  source: "rule_engine";
+  riskLevel: RiskLevel;
+  confidence: "low";
+  hipoteses: [];
+  especialidade: { principal: string; justificativa: string };
+  orientacoesGerais: string[];
+  dadosInsuficientes: boolean;
+  avisoLegal: string;
+} {
+  const configs: Record<
+    RiskLevel,
+    { principal: string; justificativa: string; orientacoes: string[] }
+  > = {
+    emergency: {
+      principal: "Pronto-socorro / SAMU",
+      justificativa:
+        "Os sinais identificados indicam possível situação de emergência. Busque atendimento imediato.",
+      orientacoes: [
+        flag.action ?? "Ligue 192 (SAMU) ou vá ao pronto-socorro mais próximo imediatamente.",
+        "Não dirija sozinho — peça ajuda a alguém ou aguarde o SAMU.",
+        "Se perder a consciência, oriente alguém a ligar 192.",
+      ],
+    },
+    high: {
+      principal: "Pronto-socorro",
+      justificativa:
+        "A intensidade e o padrão dos sintomas sugerem avaliação presencial urgente nas próximas horas.",
+      orientacoes: [
+        "Procure uma UPA ou pronto-socorro ainda hoje.",
+        "Monitore os sintomas: qualquer piora rápida, ligue 192 (SAMU).",
+        "Não tome medicamentos por conta própria — aguarde avaliação médica.",
+        "Leve uma pessoa de confiança junto se possível.",
+      ],
+    },
+    medium: {
+      principal: "Clínico Geral",
+      justificativa:
+        "Os sintomas indicam necessidade de avaliação médica em breve, preferencialmente hoje ou amanhã.",
+      orientacoes: [
+        "Procure seu médico ou uma UBS (Unidade Básica de Saúde) nas próximas 24 a 48 horas.",
+        "Mantenha-se hidratado e em repouso enquanto aguarda consulta.",
+        "Se os sintomas piorarem rapidamente, vá ao pronto-socorro.",
+        "Anote quando os sintomas começaram e como evoluíram para relatar ao médico.",
+      ],
+    },
+    low: {
+      principal: "Clínico Geral / Atenção Primária",
+      justificativa:
+        "Os sintomas sugerem condição de baixa gravidade, mas uma avaliação profissional pode ser útil.",
+      orientacoes: [
+        "Observe os sintomas por 24 a 48 horas.",
+        "Mantenha hidratação adequada e descanse.",
+        "Se houver piora ou surgimento de novos sintomas, consulte um médico.",
+        "Considere agendar uma consulta de rotina na sua UBS.",
+      ],
+    },
+  };
+
+  const cfg = configs[risk];
+  return {
+    source: "rule_engine",
+    riskLevel: risk,
+    confidence: "low",
+    hipoteses: [],
+    especialidade: {
+      principal: cfg.principal,
+      justificativa: cfg.justificativa,
+    },
+    orientacoesGerais: cfg.orientacoes,
+    dadosInsuficientes: true,
+    avisoLegal:
+      "Esta orientação foi gerada automaticamente pelo sistema de regras e tem caráter educativo. Não substitui avaliação médica presencial.",
+  };
+}
+
 export const analisarRouter: Router = Router();
 
 analisarRouter.post(
@@ -245,42 +325,21 @@ analisarRouter.post(
         errorType: err instanceof Error ? err.constructor.name : "Unknown",
       });
 
-      // Fallback determinístico — se IA falhou mas rule_engine detectou red flag,
-      // ainda conseguimos entregar uma orientação útil.
-      if (ruleLevel) {
-        const safe = AnaliseResponseSchema.parse({
-          source: "rule_engine",
-          riskLevel: ruleLevel,
-          confidence: "low",
-          hipoteses: [],
-          especialidade: {
-            principal: "Pronto-socorro",
-            justificativa:
-              "Sinais identificados pelo sistema indicam necessidade de avaliação presencial urgente.",
-          },
-          orientacoesGerais: [
-            flag.action || "Procure atendimento médico imediatamente.",
-            "Em caso de piora ou sintomas novos, ligue 192 (SAMU).",
-          ],
-          dadosInsuficientes: true,
-          avisoLegal:
-            "Esta orientação foi gerada automaticamente. Não substitui consulta médica.",
-        });
-        res.json({
-          ...safe,
-          redFlag: {
-            level: ruleLevel,
-            message: flag.message,
-            action: flag.action,
-            emergencyNumber: flag.emergencyNumber,
-          },
-        });
-        return;
-      }
-
-      res.status(503).json({
-        error:
-          "Não foi possível processar suas informações agora. Tente novamente em instantes.",
+      // Fallback determinístico — cobre TODOS os casos de falha da IA
+      const effectiveRisk: RiskLevel = ruleLevel ?? (data.intensidade >= 8 ? "high" : "medium");
+      const fallbackResponse = buildDeterministicFallback(effectiveRisk, flag);
+      const safe = AnaliseResponseSchema.parse(fallbackResponse);
+      res.json({
+        ...safe,
+        redFlag:
+          flag.detected && flag.level
+            ? {
+                level: flag.level,
+                message: flag.message,
+                action: flag.action,
+                emergencyNumber: flag.emergencyNumber,
+              }
+            : null,
       });
     }
   },
