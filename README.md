@@ -1,75 +1,116 @@
 # Orienta Saúde
 
-> Assistente educativo, em português, que orienta adultos sobre **nível de urgência** e **especialidade médica a buscar** a partir de sintomas selecionados — projeto de extensão universitária alinhado à **ODS 3 (Saúde e Bem-Estar)**.
+> Assistente educativo digital que orienta adultos sobre **nível de urgência** e **especialidade médica a buscar** a partir de sintomas selecionados — projeto de extensão universitária alinhado à **ODS 3 (Saúde e Bem-Estar)**.
 
-🎓 Projeto de portfólio | 🆓 Zero custo (Gemini free tier) | 🇧🇷 Adult-only (≥18) | ⚠️ Não substitui consulta médica
+🎓 Projeto de extensão universitária | 🤖 IA integrada (Groq / Llama 3.3) | 🇧🇷 Apenas adultos (≥18) | ⚠️ Não substitui consulta médica
+
+🔗 **Deploy:** https://mvp-orienta-saude-production.up.railway.app
 
 ---
 
 ## Por que existe
 
-Muita gente busca orientação em saúde online e cai em conteúdo alarmante ou genérico. O Orienta Saúde propõe um caminho **curto, transparente e seguro** — em ~3 minutos o usuário recebe:
+Muita gente busca orientação em saúde online e cai em conteúdo alarmante ou genérico. O Orienta Saúde propõe um caminho **curto, transparente e seguro** — em aproximadamente 3 minutos o usuário recebe:
 
-- **Nível de urgência sugerido** (autocuidado → emergência), com justificativa em linguagem simples
+- **Nível de urgência** (autocuidado → emergência) com justificativa em linguagem simples
 - **Especialidade médica** mais apropriada para o conjunto de sintomas
+- **Hipóteses clínicas** — condições possivelmente relacionadas, descritas de forma acessível
 - **Orientações práticas** sobre o que observar e quando reavaliar
 
 A premissa é orientar com clareza, **sempre apontando o caminho do atendimento profissional**.
 
 ---
 
+## O papel da IA no projeto
+
+A inteligência artificial é a peça central de personalização do sistema, atuando em dois momentos:
+
+### 1. Geração de perguntas dinâmicas (`/api/perguntas`)
+
+Após o usuário selecionar sintomas e regiões corporais, a IA gera de **3 a 5 perguntas clínicas personalizadas** de aprofundamento — variando de acordo com o quadro específico de cada pessoa. Para sintomas respiratórios, pergunta sobre alérgenos; para sintomas digestivos, sobre padrão alimentar; e assim por diante.
+
+### 2. Análise clínica e orientações (`/api/analisar`)
+
+Com todos os dados coletados, a IA retorna:
+
+- `riskLevel` — nível de risco sugerido (`low | medium | high | emergency`)
+- `confidence` — grau de confiança (`low | medium | high`) — nunca porcentagens
+- `hipoteses` — condições possivelmente relacionadas, com relevância e descrição acessível
+- `especialidade` — especialidade principal, secundária e justificativa
+- `orientacoesGerais` — ações práticas sem recomendação de medicamentos
+- `avisoLegal` — reforço do caráter educativo
+
+### O que a IA não decide
+
+A IA **não tem a palavra final em emergências**. O motor de red flags (`lib/triagem-domain/src/redFlags.ts`) é uma camada determinística soberana que opera independentemente da IA. A reconciliação segue a regra:
+
+```
+nível final = max(motor_de_regras, ia)
+```
+
+O campo `source` na resposta indica qual camada determinou o resultado: `"rule_engine"` ou `"ai"`.
+
+---
+
 ## Decisões de arquitetura
 
-### 1. Regra determinística é soberana sobre a IA
+### Motor de regras é soberano
 
-O motor de **red flags** (`lib/triagem-domain/src/redFlags.ts`) é uma camada determinística pura, baseada em IDs de sintomas pré-definidos. Roda em **dois momentos**:
-
+O motor de **red flags** roda em **dois momentos**:
 1. **Cliente** — em `onChange` da seleção de sintomas (UX imediata)
 2. **Servidor** — antes de chamar a IA, nas rotas `/api/perguntas` e `/api/analisar`
 
-A resposta da análise carrega um campo `source: "rule_engine" | "ai"` e o servidor aplica `max(risk_engine, risk_ia)` — **o nível mais alto sempre vence**. Isso garante que a IA nunca rebaixe um sinal de emergência detectado por regra.
+Sintomas individualmente críticos (desmaio, convulsão, fala alterada, sangramento, pensamentos de autolesão) e combinações perigosas (dor no peito + falta de ar, dor de cabeça + alterações neurológicas) sempre acionam emergência — independente do que a IA responda.
 
-### 2. Catálogos pré-definidos, não texto livre
+### Catálogos pré-definidos, não texto livre
 
-Sintomas e regiões corporais são IDs estáveis (`SYMPTOMS`, `REGIONS`). Eliminamos falsos negativos por erro de digitação no red flag check — `dor_peito` é uma string, não uma frase ambígua.
+Sintomas e regiões corporais são IDs estáveis (`SYMPTOMS`, `REGIONS`). Isso elimina falsos negativos por ambiguidade — `"dor_peito"` é uma string exata, não uma frase que precisa de interpretação.
 
-### 3. Confiança é enum, nunca porcentagem
+### Confiança é enum, nunca porcentagem
 
-A IA tende a inventar números falsos de "% de certeza". Forçamos `confidence: "low" | "medium" | "high"` e qualquer entrada ambígua cai em `low` (mais seguro).
+A IA tende a inventar números de certeza. Forçamos `confidence: "low" | "medium" | "high"` — qualquer entrada ambígua cai em `"low"` (mais seguro).
 
-### 4. Dados clínicos são efêmeros, só feedback persiste
+### Fallback determinístico
 
-O store (Zustand) é totalmente em memória — recarregar a página apaga tudo. **Nenhum dado clínico vai para o banco.** Apenas o feedback final do usuário (estrelas, útil sim/não, comentário opcional + contexto agregado: riskLevel, especialidade, source) é gravado de forma anônima, para fins de melhoria.
+Se a IA falhar, o sistema não retorna erro ao usuário. Um fallback determinístico assume o controle e entrega orientações baseadas apenas no nível de risco calculado pelas regras — sem hipóteses e com confiança marcada como baixa.
 
-Logs do servidor são sanitizados (registram `hasComentario: true/false`, nunca o texto).
+### Dados clínicos são efêmeros
 
-### 5. Contrato OpenAPI primeiro
+O store (Zustand) é totalmente em memória — recarregar a página apaga tudo. **Nenhum dado clínico vai para o banco.** Apenas o feedback final (estrelas, útil sim/não, comentário opcional + metadados agregados anônimos) é persistido.
 
-`lib/api-spec/openapi.yaml` define o contrato. Orval gera hooks React Query (`useGerarPerguntas`, `useAnalisarTriagem`, `useEnviarFeedback`) e schemas Zod, garantindo cliente e servidor sempre em sincronia.
+### Contrato OpenAPI primeiro
+
+`lib/api-spec/openapi.yaml` define o contrato. Orval gera hooks React Query (`useGerarPerguntas`, `useAnalisarTriagem`, `useEnviarFeedback`) e schemas Zod — cliente e servidor sempre em sincronia.
 
 ---
 
 ## Fluxo do usuário (6 etapas)
 
 ```
-Consentimento LGPD → Sobre você (idade ≥18, gênero, crônicas)
-                  → Sintomas (catálogo + red flag em onChange)
-                  → Regiões corporais
-                  → Entrevista (3 perguntas estáticas + 3-7 dinâmicas geradas pela IA)
-                  → Resultado (urgência, especialidade, hipóteses, orientações) + Feedback persistente
+1. Consentimento LGPD
+2. Dados do paciente (idade ≥18, gênero, condições crônicas)
+3. Seleção de sintomas (catálogo + red flag em tempo real)
+4. Regiões corporais
+5. Entrevista clínica (3 perguntas fixas + 3-5 geradas pela IA)
+6. Resultado (urgência, especialidade, hipóteses, orientações) + Feedback
 ```
 
-A qualquer momento em que um sinal crítico é detectado, um banner vermelho destaca a recomendação (incluindo o número de emergência **192 SAMU**).
+Em qualquer etapa com sinal crítico detectado, um banner vermelho exibe a recomendação e o número **192 (SAMU)**.
 
 ---
 
 ## Stack
 
-- **Frontend**: React 18 + Vite + Tailwind 4, Zustand (state machine), wouter (routing), React Query, Framer Motion
-- **Backend**: Express 5, integração Gemini (Replit free tier), rate limit 5 req/min
-- **DB**: PostgreSQL + Drizzle ORM (uma única tabela: `feedbacks`)
-- **Contrato**: OpenAPI 3 + Orval (hooks tipados) + Zod
-- **Monorepo**: pnpm workspaces + TypeScript 5.9 (composite libs)
+| Camada | Tecnologias |
+|--------|-------------|
+| Frontend | React 18, Vite, Tailwind 4, Zustand, Wouter, React Query, Framer Motion |
+| Backend | Node.js, Express 5, Pino, express-rate-limit |
+| IA | Groq API — modelo `llama-3.3-70b-versatile` |
+| Banco de dados | PostgreSQL + Drizzle ORM |
+| Validação | Zod (schemas compartilhados) |
+| Contrato de API | OpenAPI 3.0 + Orval |
+| Deploy | Railway (Nixpacks) |
+| Monorepo | pnpm workspaces + TypeScript 5.9 |
 
 ### Estrutura
 
@@ -78,52 +119,62 @@ artifacts/
   triagem-web/        # React + Vite (landing + wizard 6 etapas)
   api-server/         # Express (rotas /api/perguntas, /api/analisar, /api/feedback)
 lib/
-  triagem-domain/     # Catálogos puros + rule engine (red flags, riskLevel, confidence)
-  triagem-schemas/    # Schemas Zod (input + resposta IA + feedback)
+  triagem-domain/     # Catálogos + motor de red flags
+  triagem-schemas/    # Schemas Zod
   api-spec/           # OpenAPI YAML
   api-client-react/   # Hooks gerados (Orval)
   db/                 # Drizzle schema
+  integrations-gemini-ai/  # Adaptador de IA (atualmente Groq)
 ```
 
 ---
 
-## Como rodar
+## Como rodar localmente
 
-Requisitos: Node 24, pnpm, PostgreSQL (`DATABASE_URL` no env).
+Requisitos: Node 20+, pnpm, PostgreSQL (`DATABASE_URL` no env) e `GROQ_API_KEY` ([console.groq.com](https://console.groq.com)).
 
 ```bash
 pnpm install
 pnpm --filter @workspace/db run push            # cria a tabela feedbacks
 pnpm --filter @workspace/api-server run dev     # API na porta 5000
-pnpm --filter @workspace/triagem-web run dev    # web app
+pnpm --filter @workspace/triagem-web run dev    # frontend
 ```
 
-Na Replit, os workflows já estão configurados — basta abrir o preview.
+### Variáveis de ambiente necessárias
+
+```
+GROQ_API_KEY=gsk_...          # chave do Groq (gratuito)
+DATABASE_URL=postgresql://... # conexão PostgreSQL
+NODE_ENV=development
+SESSION_SECRET=...
+```
 
 ### Comandos úteis
 
-- `pnpm run typecheck` — typecheck completo do monorepo
-- `pnpm run build` — typecheck + build
-- `pnpm --filter @workspace/api-spec run codegen` — regenera hooks/schemas a partir do OpenAPI
+```bash
+pnpm run typecheck                                        # typecheck completo do monorepo
+pnpm run build                                            # build completo
+pnpm --filter @workspace/api-spec run codegen            # regenera hooks/schemas a partir do OpenAPI
+```
 
 ---
 
 ## Status
 
-| Fase | Escopo                                                                  | Status |
-|------|-------------------------------------------------------------------------|--------|
-| 1    | Fundação (catálogos, rule engine, schemas, store, landing)              | ✅      |
-| 2    | Backend (Gemini, rotas, rate limit, feedback persistente)               | ✅      |
-| 3    | Frontend (tema v2, landing, wizard 6 etapas, resultado, feedback form)  | ✅      |
+| Fase | Escopo | Status |
+|------|--------|--------|
+| 1 | Fundação (catálogos, rule engine, schemas, store, landing) | ✅ |
+| 2 | Backend (integração IA, rotas, rate limit, feedback) | ✅ |
+| 3 | Frontend (wizard 6 etapas, resultado, feedback form, deploy) | ✅ |
 
 ---
 
-## Limites assumidos (MVP)
+## Limitações do MVP
 
-- **Adult-only** — usuários com menos de 18 anos são bloqueados no schema. Pediatria fica para uma futura V2.
-- **Português brasileiro** — sem i18n.
-- **Sem login, sem histórico** — o usuário não pode rever orientações passadas. É proposital: garante zero exposição de dados clínicos.
-- **Demo via link de dev** — não publicado em produção. Projeto é para portfólio.
+- **Adult-only** — usuários com menos de 18 anos são bloqueados. Pediatria fica para V2.
+- **Português brasileiro** — sem internacionalização.
+- **Sem login, sem histórico** — proposital para garantir zero exposição de dados clínicos.
+- **Sem autenticação** — o sistema é anônimo por design.
 
 ---
 
@@ -133,4 +184,4 @@ Ferramenta **educativa**. Não realiza diagnóstico, não prescreve medicamentos
 
 ---
 
-_Projeto de extensão universitária. Alinhado à ODS 3 — Saúde e Bem-Estar de Qualidade._
+*Projeto de extensão universitária. Alinhado à ODS 3 — Saúde e Bem-Estar de Qualidade.*
