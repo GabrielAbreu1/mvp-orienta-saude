@@ -5,6 +5,7 @@ import {
   Lock,
   Check,
   ChevronRight,
+  ChevronDown,
   Search,
   Loader2,
   AlertTriangle,
@@ -183,6 +184,7 @@ export function Step0Consentimento() {
 export function Step1Paciente() {
   const { draft, setPaciente, avancarEtapa } = useTriageStore();
   const { idade, sexo, condicoesCronicas } = draft.paciente;
+  const [generoInfoAberto, setGeneroInfoAberto] = useState(false);
 
   const podeAvancar = idade !== null && idade >= 18 && idade <= 120 && sexo !== null;
 
@@ -237,14 +239,23 @@ export function Step1Paciente() {
           <label className="block text-sm font-semibold text-[#2D3748] mb-2 font-['Inter']">
             Gênero
           </label>
-          <div className="mb-3 flex items-start gap-2 text-xs text-[#4A5568] leading-relaxed bg-[#f8f9fa] border border-[#e2e8f0] rounded-xl px-3 py-2.5">
-            <Info className="w-4 h-4 text-[#0056b3] flex-shrink-0 mt-0.5" />
-            <span>
-              <strong>Cisgênero</strong> = sua identidade de gênero é a mesma do sexo
-              que recebeu ao nascer. <strong>Transgênero</strong> = sua identidade de
-              gênero é diferente do sexo que recebeu ao nascer.
-            </span>
-          </div>
+          <button
+            type="button"
+            onClick={() => setGeneroInfoAberto((v) => !v)}
+            className="mb-3 flex items-center gap-1.5 text-xs text-[#0056b3] font-semibold hover:underline"
+          >
+            <Info className="w-3.5 h-3.5" />
+            O que significa cisgênero / transgênero?
+            <ChevronDown
+              className={`w-3.5 h-3.5 transition-transform duration-200 ${generoInfoAberto ? "rotate-180" : ""}`}
+            />
+          </button>
+          {generoInfoAberto && (
+            <div className="mb-3 text-xs text-[#4A5568] leading-relaxed bg-[#f0f6ff] border border-[#0056b3]/20 rounded-xl px-4 py-3">
+              <p><strong>Cisgênero</strong> — sua identidade de gênero é a mesma do sexo que recebeu ao nascer.</p>
+              <p className="mt-1"><strong>Transgênero</strong> — sua identidade de gênero é diferente do sexo que recebeu ao nascer.</p>
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {sexoOptions.map((opt) => (
               <button
@@ -884,27 +895,37 @@ export function Step4Entrevista() {
                   </div>
                 ) : (
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-[#718096] font-semibold">
-                        0 (nada) → 10 (máximo)
-                      </span>
-                      <span
-                        data-testid={`text-escala-${p.id}`}
-                        className="text-base font-bold text-[#0056b3] tabular-nums"
-                      >
-                        {valorAtual || "—"}
-                      </span>
+                    <div className="grid grid-cols-6 sm:grid-cols-11 gap-1.5">
+                      {Array.from({ length: 11 }, (_, i) => i).map((n) => {
+                        const cor = n <= 3
+                          ? { vivo: "bg-[#48bb78]", texto: "text-white" }
+                          : n <= 6
+                            ? { vivo: "bg-[#ed8936]", texto: "text-white" }
+                            : { vivo: "bg-[#e53e3e]", texto: "text-white" };
+                        const sel = valorAtual === String(n);
+                        const temSel = valorAtual !== "";
+                        const classes = sel
+                          ? `${cor.vivo} ${cor.texto} ring-2 ring-offset-1 ring-[#1A202C]/50 scale-105`
+                          : temSel
+                            ? "bg-[#e2e8f0] text-[#a0aec0]"
+                            : `${cor.vivo} ${cor.texto} opacity-85 hover:opacity-100`;
+                        return (
+                          <button
+                            key={n}
+                            type="button"
+                            data-testid={`button-escala-${p.id}-${n}`}
+                            onClick={() => setResposta(p.id, String(n))}
+                            className={`h-11 rounded-xl font-['Inter'] font-bold text-sm tabular-nums transition-all ${classes}`}
+                          >
+                            {n}
+                          </button>
+                        );
+                      })}
                     </div>
-                    <input
-                      type="range"
-                      min={0}
-                      max={10}
-                      step={1}
-                      value={valorAtual === "" ? 5 : Number(valorAtual)}
-                      onChange={(e) => setResposta(p.id, e.target.value)}
-                      data-testid={`input-escala-${p.id}`}
-                      className="w-full accent-[#0056b3]"
-                    />
+                    <div className="flex justify-between text-[10px] text-[#718096] mt-1.5 px-0.5">
+                      <span>0 = nada</span>
+                      <span>10 = máximo</span>
+                    </div>
                   </div>
                 )}
               </div>

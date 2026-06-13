@@ -92,9 +92,12 @@ export default function Landing() {
             </span>
           </div>
         </div>
-        <nav className="hidden md:flex gap-8">
+        <nav className="hidden md:flex gap-8 items-center">
           <a href="#como-funciona" className="text-sm font-semibold text-[#4A5568] hover:text-[#0056b3] transition-colors">Como funciona</a>
           <a href="#sobre" className="text-sm font-semibold text-[#4A5568] hover:text-[#0056b3] transition-colors">Sobre o projeto</a>
+          <Link href="/stats" className="text-sm font-semibold text-[#2e8b57] hover:text-[#236b43] transition-colors flex items-center gap-1.5">
+            <Star className="w-3.5 h-3.5 fill-[#2e8b57]" /> Feedbacks
+          </Link>
         </nav>
       </header>
 
@@ -242,9 +245,9 @@ export default function Landing() {
             <div className="mt-8 text-center">
               <Link
                 href="/stats"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-[#0056b3] hover:underline"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl border-2 border-[#2e8b57] text-[#2e8b57] text-sm font-semibold hover:bg-[#2e8b57] hover:text-white transition-all duration-200"
               >
-                Ver todos os feedbacks <ArrowRight className="w-4 h-4" />
+                <Star className="w-4 h-4" /> Ver todos os feedbacks <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </section>
@@ -278,9 +281,9 @@ export default function Landing() {
           <div className="flex items-center gap-4">
             <Link
               href="/stats"
-              className="text-sm text-[#718096] hover:text-[#0056b3] transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#2e8b57] hover:text-[#236b43] transition-colors"
             >
-              Ver feedbacks
+              <Star className="w-3.5 h-3.5 fill-[#2e8b57]" /> Ver feedbacks
             </Link>
             <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-[#e2e8f0] shadow-sm">
               <div className="w-8 h-8 bg-[#2e8b57]/10 rounded-lg flex items-center justify-center">

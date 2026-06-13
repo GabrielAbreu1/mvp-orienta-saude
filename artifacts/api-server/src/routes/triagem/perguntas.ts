@@ -45,27 +45,39 @@ function cacheSet(key: string, perguntas: Pergunta[]): void {
 
 const FALLBACK_PERGUNTAS: Pergunta[] = [
   {
-    id: "fb_intensidade",
-    pergunta: "Em uma escala de 0 a 10, qual a intensidade do que você sente?",
-    tipo: "escala",
-    opcoes: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
-  },
-  {
-    id: "fb_inicio",
-    pergunta: "Há quanto tempo isso começou?",
+    id: "fb_desencadeante",
+    pergunta: "O que parece piorar ou desencadear os sintomas?",
     tipo: "opcoes",
     opcoes: [
-      "Há menos de 24h",
-      "Há 1 a 3 dias",
-      "Há 4 a 7 dias",
-      "Há mais de uma semana",
+      "Atividade física",
+      "Alimentação",
+      "Estresse ou ansiedade",
+      "Mudança de posição",
+      "Sem motivo aparente",
     ],
   },
   {
-    id: "fb_evolucao",
-    pergunta: "Como está evoluindo?",
+    id: "fb_outros_sintomas",
+    pergunta: "Além dos sintomas já marcados, você sente mais alguma coisa?",
     tipo: "opcoes",
-    opcoes: ["Piorando", "Estável", "Melhorando"],
+    opcoes: [
+      "Náusea ou vômito",
+      "Tontura ou desequilíbrio",
+      "Cansaço intenso",
+      "Suor frio",
+      "Nenhum outro",
+    ],
+  },
+  {
+    id: "fb_impacto",
+    pergunta: "Como esses sintomas estão afetando sua rotina agora?",
+    tipo: "opcoes",
+    opcoes: [
+      "Consigo fazer tudo normalmente",
+      "Faço as atividades com dificuldade",
+      "Só consigo ficar em repouso",
+      "Preciso de ajuda para me movimentar",
+    ],
   },
 ];
 
