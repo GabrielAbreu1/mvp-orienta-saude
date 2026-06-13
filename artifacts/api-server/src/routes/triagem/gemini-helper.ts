@@ -1,18 +1,16 @@
-import { ai } from "@workspace/integrations-gemini-ai";
+import OpenAI from "openai";
 import { logger } from "../../lib/logger.js";
 
-export const GEMINI_MODEL = "gemini-2.5-flash";
-const DEFAULT_TIMEOUT_MS = 15_000;
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-/**
- * Chama o Gemini com timeout e 1 retry em falha transitória.
- * Lança o erro final se ambas tentativas falharem (caller decide fallback).
- */
+const DEFAULT_TIMEOUT_MS = 30_000;
+
 export async function callGeminiJSON(opts: {
   system: string;
   user: string;
   maxOutputTokens?: number;
-  /** ms */
   timeoutMs?: number;
 }): Promise<string> {
   const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
@@ -23,20 +21,20 @@ export async function callGeminiJSON(opts: {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const response = await ai.models.generateContent({
-        model: GEMINI_MODEL,
-        contents: [{ role: "user", parts: [{ text: opts.user }] }],
-        config: {
-          systemInstruction: opts.system,
-          responseMimeType: "application/json",
-          maxOutputTokens: opts.maxOutputTokens ?? 8192,
-          abortSignal: controller.signal,
+      const response = await client.chat.completions.create(
+        {
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: opts.system },
+            { role: "user", content: opts.user },
+          ],
+          response_format: { type: "json_object" },
+          max_tokens: opts.maxOutputTokens ?? 4096,
         },
-      });
-      const text = response.text ?? "";
-      if (!text.trim()) {
-        throw new Error("Empty response from Gemini");
-      }
+        { signal: controller.signal }
+      );
+      const text = response.choices[0]?.message?.content ?? "";
+      if (!text.trim()) throw new Error("Empty response from OpenAI");
       return text;
     } catch (err) {
       lastErr = err;
@@ -46,24 +44,16 @@ export async function callGeminiJSON(opts: {
       clearTimeout(timer);
     }
   }
-  throw lastErr instanceof Error ? lastErr : new Error("Gemini call failed");
+  throw lastErr instanceof Error ? lastErr : new Error("OpenAI call failed");
 }
 
-/**
- * Extrai JSON do texto retornado pela IA. Aceita JSON puro, fenced blocks
- * (```json ... ```), ou texto com JSON embutido (extrai o primeiro { ou [).
- */
 export function extractJSON(raw: string): unknown {
   const trimmed = raw.trim();
-
-  // Remove fences ```json ... ``` ou ``` ... ```
   const fenced = trimmed.replace(/^```(?:json)?\s*([\s\S]*?)\s*```$/i, "$1");
   const candidate = fenced.trim();
-
   try {
     return JSON.parse(candidate);
   } catch {
-    // fallback: tenta achar primeiro { ou [
     const firstObj = candidate.indexOf("{");
     const firstArr = candidate.indexOf("[");
     const starts = [firstObj, firstArr].filter((i) => i >= 0);
@@ -87,6 +77,5 @@ export function logTechnical(event: {
   errorType?: string;
 }): void {
   const { level, ...rest } = event;
-  // Sanitizado — nunca inclui sintomas, textos do usuário, idade, etc.
   logger[level](rest);
 }
