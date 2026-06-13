@@ -2,7 +2,8 @@ import OpenAI from "openai";
 import { logger } from "../../lib/logger.js";
 
 const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: "https://api.groq.com/openai/v1",
 });
 
 const DEFAULT_TIMEOUT_MS = 30_000;
@@ -23,7 +24,7 @@ export async function callGeminiJSON(opts: {
     try {
       const response = await client.chat.completions.create(
         {
-          model: "gpt-4o-mini",
+          model: "llama-3.3-70b-versatile",
           messages: [
             { role: "system", content: opts.system },
             { role: "user", content: opts.user },
@@ -34,7 +35,7 @@ export async function callGeminiJSON(opts: {
         { signal: controller.signal }
       );
       const text = response.choices[0]?.message?.content ?? "";
-      if (!text.trim()) throw new Error("Empty response from OpenAI");
+      if (!text.trim()) throw new Error("Empty response from Groq");
       return text;
     } catch (err) {
       lastErr = err;
@@ -44,7 +45,7 @@ export async function callGeminiJSON(opts: {
       clearTimeout(timer);
     }
   }
-  throw lastErr instanceof Error ? lastErr : new Error("OpenAI call failed");
+  throw lastErr instanceof Error ? lastErr : new Error("Groq call failed");
 }
 
 export function extractJSON(raw: string): unknown {
