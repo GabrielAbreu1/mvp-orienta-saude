@@ -151,9 +151,14 @@ export function FeedbackForm({ resultado }: Props) {
           placeholder="Conte o que funcionou bem ou o que pode melhorar."
           className="w-full px-4 py-3 rounded-2xl border-2 border-[#e2e8f0] focus:border-[#0056b3] focus:outline-none text-sm text-[#2D3748] resize-none font-['Open_Sans']"
         />
-        <p className="text-xs text-[#718096] mt-1.5 text-right">
-          {comentario.length}/500
-        </p>
+        <div className="flex justify-between items-start mt-1.5 gap-2">
+          <p className="text-xs text-[#718096] leading-relaxed">
+            Não inclua seu nome, CPF ou outros dados pessoais neste campo.
+          </p>
+          <p className="text-xs text-[#718096] flex-shrink-0">
+            {comentario.length}/500
+          </p>
+        </div>
       </div>
 
       {mutation.isError && (

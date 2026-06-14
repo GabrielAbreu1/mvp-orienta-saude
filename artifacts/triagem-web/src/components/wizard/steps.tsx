@@ -123,7 +123,8 @@ export function Step0Consentimento() {
               Suas respostas clínicas (sintomas, regiões, perguntas) <strong>não são
               armazenadas</strong>. Apenas seu feedback final (avaliação em estrelas e
               comentário opcional) pode ser salvo de forma anônima, para fins de melhoria
-              do projeto.
+              do projeto. Comentários são automaticamente excluídos após <strong>90 dias</strong>.
+              Não inclua dados pessoais (nome, CPF, e-mail) no campo de comentário.
             </p>
           </div>
         </div>
