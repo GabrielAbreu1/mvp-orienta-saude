@@ -64,7 +64,7 @@ Sintomas individualmente críticos (desmaio, convulsão, fala alterada, sangrame
 
 ### Catálogos pré-definidos, não texto livre
 
-Sintomas e regiões corporais são IDs estáveis (`SYMPTOMS`, `REGIONS`). Isso elimina falsos negativos por ambiguidade — `"dor_peito"` é uma string exata, não uma frase que precisa de interpretação.
+Sintomas e regiões corporais são IDs estáveis (`SYMPTOMS`, `REGIONS`). Isso elimina falsos negativos por ambiguidade.
 
 ### Confiança é enum, nunca porcentagem
 
@@ -72,22 +72,37 @@ A IA tende a inventar números de certeza. Forçamos `confidence: "low" | "mediu
 
 ### Fallback determinístico
 
-Se a IA falhar, o sistema não retorna erro ao usuário. Um fallback determinístico assume o controle e entrega orientações baseadas apenas no nível de risco calculado pelas regras — sem hipóteses e com confiança marcada como baixa.
+Se a IA falhar, o sistema não retorna erro. Um fallback determinístico entrega orientações baseadas no nível de risco das regras, sem hipóteses e com confiança `"low"`. O campo `fallback: true` identifica esse cenário.
 
 ### Dados clínicos são efêmeros
 
-O store (Zustand) é totalmente em memória — recarregar a página apaga tudo. **Nenhum dado clínico vai para o banco.** Apenas o feedback final (estrelas, útil sim/não, comentário opcional + metadados agregados anônimos) é persistido.
+O store (Zustand) é totalmente em memória — recarregar a página apaga tudo. **Nenhum dado clínico vai para o banco.**
 
 ### Contrato OpenAPI primeiro
 
-`lib/api-spec/openapi.yaml` define o contrato. Orval gera hooks React Query (`useGerarPerguntas`, `useAnalisarTriagem`, `useEnviarFeedback`) e schemas Zod — cliente e servidor sempre em sincronia.
+`lib/api-spec/openapi.yaml` define o contrato. Orval gera hooks React Query e schemas Zod — cliente e servidor sempre em sincronia.
+
+---
+
+## Privacidade e LGPD
+
+| O que é armazenado | Detalhes |
+|---|---|
+| Estrelas, útil, riskLevel, especialidade, source | Dados agregados anônimos — mantidos indefinidamente para estatísticas |
+| Comentário (texto livre, opcional) | **Apagado automaticamente após 90 dias** |
+| Sintomas, respostas, dados do paciente | **Nunca armazenados** — vivem só na memória do browser |
+| IP do usuário | **Nunca armazenado** |
+
+O formulário de feedback exibe o aviso: *"Não inclua seu nome, CPF ou outros dados pessoais neste campo."*
+
+O servidor executa um job de limpeza a cada 24h que apaga o campo `comentario` de registros com mais de 90 dias.
 
 ---
 
 ## Fluxo do usuário (6 etapas)
 
 ```
-1. Consentimento LGPD
+1. Consentimento LGPD (política de dados + retenção 90 dias)
 2. Dados do paciente (idade ≥18, gênero, condições crônicas)
 3. Seleção de sintomas (catálogo + red flag em tempo real)
 4. Regiões corporais
@@ -105,8 +120,8 @@ Em qualquer etapa com sinal crítico detectado, um banner vermelho exibe a recom
 |--------|-------------|
 | Frontend | React 18, Vite, Tailwind 4, Zustand, Wouter, React Query, Framer Motion |
 | Backend | Node.js, Express 5, Pino, express-rate-limit |
-| IA | Groq API — modelo `llama-3.3-70b-versatile` |
-| Banco de dados | PostgreSQL + Drizzle ORM |
+| IA | Groq API — modelo `llama-3.3-70b-versatile` (gratuito) |
+| Banco de dados | PostgreSQL + Drizzle ORM (Railway) |
 | Validação | Zod (schemas compartilhados) |
 | Contrato de API | OpenAPI 3.0 + Orval |
 | Deploy | Railway (Nixpacks) |
@@ -117,21 +132,21 @@ Em qualquer etapa com sinal crítico detectado, um banner vermelho exibe a recom
 ```
 artifacts/
   triagem-web/        # React + Vite (landing + wizard 6 etapas)
-  api-server/         # Express (rotas /api/perguntas, /api/analisar, /api/feedback)
+  api-server/         # Express (rotas /api/perguntas, /api/analisar, /api/feedback + job LGPD)
 lib/
   triagem-domain/     # Catálogos + motor de red flags
   triagem-schemas/    # Schemas Zod
   api-spec/           # OpenAPI YAML
   api-client-react/   # Hooks gerados (Orval)
   db/                 # Drizzle schema
-  integrations-gemini-ai/  # Adaptador de IA (atualmente Groq)
+  integrations-gemini-ai/  # Adaptador de IA (Groq/Llama)
 ```
 
 ---
 
 ## Como rodar localmente
 
-Requisitos: Node 20+, pnpm, PostgreSQL (`DATABASE_URL` no env) e `GROQ_API_KEY` ([console.groq.com](https://console.groq.com)).
+Requisitos: Node 20+, pnpm, PostgreSQL (`DATABASE_URL`) e `GROQ_API_KEY` ([console.groq.com](https://console.groq.com)).
 
 ```bash
 pnpm install
@@ -140,21 +155,14 @@ pnpm --filter @workspace/api-server run dev     # API na porta 5000
 pnpm --filter @workspace/triagem-web run dev    # frontend
 ```
 
-### Variáveis de ambiente necessárias
+### Variáveis de ambiente
 
 ```
 GROQ_API_KEY=gsk_...          # chave do Groq (gratuito)
 DATABASE_URL=postgresql://... # conexão PostgreSQL
 NODE_ENV=development
 SESSION_SECRET=...
-```
-
-### Comandos úteis
-
-```bash
-pnpm run typecheck                                        # typecheck completo do monorepo
-pnpm run build                                            # build completo
-pnpm --filter @workspace/api-spec run codegen            # regenera hooks/schemas a partir do OpenAPI
+PORT=5000
 ```
 
 ---
@@ -164,8 +172,9 @@ pnpm --filter @workspace/api-spec run codegen            # regenera hooks/schema
 | Fase | Escopo | Status |
 |------|--------|--------|
 | 1 | Fundação (catálogos, rule engine, schemas, store, landing) | ✅ |
-| 2 | Backend (integração IA, rotas, rate limit, feedback) | ✅ |
+| 2 | Backend (integração IA Groq/Llama, rotas, rate limit, feedback) | ✅ |
 | 3 | Frontend (wizard 6 etapas, resultado, feedback form, deploy) | ✅ |
+| 4 | Adequações LGPD (aviso, retenção 90 dias, limpeza automática) | ✅ |
 
 ---
 
