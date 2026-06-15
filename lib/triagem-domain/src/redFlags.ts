@@ -98,17 +98,31 @@ const NO_FLAG: RedFlagResult = {
   emergencyNumber: "",
 };
 
+const CRITICAL_SYMPTOM_LABELS: Record<string, string> = {
+  desmaio: "Desmaio ou perda de consciência",
+  convulsao: "Convulsão ou tremores intensos",
+  fala_alterada: "Fala alterada ou travada",
+  fraqueza_facial: "Fraqueza ou assimetria facial",
+  confusao_mental: "Confusão mental",
+  tosse_sangue: "Tosse com sangue",
+  sangue_fezes: "Sangue nas fezes",
+  urina_sangue: "Sangue na urina",
+  manchas_roxas: "Manchas roxas ou petéquias",
+  sangramento: "Sangramento intenso",
+  pensamentos_auto: "Pensamentos de se machucar",
+};
+
 export function checkRedFlags(snapshot: TriageSnapshot): RedFlagResult {
   const ids = new Set<string>(snapshot.sintomasSelecionados);
 
   // 1) IDs críticos individuais → emergency
   for (const criticalId of CRITICAL_SYMPTOM_IDS) {
     if (ids.has(criticalId)) {
+      const label = CRITICAL_SYMPTOM_LABELS[criticalId] ?? criticalId;
       return {
         detected: true,
         level: "emergency",
-        message:
-          "Um dos sintomas selecionados pode exigir atenção médica imediata.",
+        message: `O sintoma "${label}" pode exigir atenção médica imediata.`,
         action:
           "Não continue este formulário agora. Ligue para o SAMU ou vá ao pronto-socorro mais próximo.",
         ruleId: `critical_symptom:${criticalId}`,

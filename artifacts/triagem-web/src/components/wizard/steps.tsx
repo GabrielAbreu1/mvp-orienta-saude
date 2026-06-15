@@ -1079,22 +1079,7 @@ export function Step5Resultado() {
             <h3 className="font-['Inter'] font-bold text-xl md:text-2xl mt-1 mb-2">
               {meta.label}
             </h3>
-            <div className="flex items-center gap-3 text-xs font-semibold opacity-80">
-              <span className="px-2 py-1 rounded-md bg-white/60">
-                Origem:{" "}
-                {resultado.source === "rule_engine"
-                  ? "Regra determinística"
-                  : "Inteligência artificial"}
-              </span>
-              <span className="px-2 py-1 rounded-md bg-white/60">
-                Confiança:{" "}
-                {resultado.confidence === "low"
-                  ? "baixa"
-                  : resultado.confidence === "medium"
-                    ? "média"
-                    : "alta"}
-              </span>
-            </div>
+
           </div>
         </div>
       </div>
