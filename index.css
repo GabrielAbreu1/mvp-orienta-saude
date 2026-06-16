@@ -67,7 +67,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* LIGHT MODE — v3: branco + Verde Saúde + Verde Menta + Cinza Claro */
+/* LIGHT MODE — v2: branco + Azul Clássico + Verde Menta + Cinza Claro */
 :root {
   --button-outline: rgba(0, 0, 0, 0.1);
   --badge-outline: rgba(0, 0, 0, 0.05);
@@ -78,19 +78,19 @@
   --background: 0 0% 100%;             /* branco */
   --foreground: 217 28% 14%;           /* #1A202C — cinza-escuro tipográfico */
 
-  --border: 150 25% 84%;               /* #D1E8DA — verde suave */
+  --border: 150 25% 84%;               /* #e2e8f0 */
   --input: 150 25% 84%;
-  --ring: 160 42% 25%;                 /* #1B4D3E — verde escuro */
+  --ring: 160 42% 25%;                /* #1B4D3E verde escuro */
 
   --card: 0 0% 100%;
   --card-foreground: 217 28% 14%;
-  --card-border: 214 32% 91%;
+  --card-border: 150 25% 84%;
 
   --popover: 0 0% 100%;
   --popover-foreground: 217 28% 14%;
-  --popover-border: 214 32% 91%;
+  --popover-border: 150 25% 84%;
 
-  --primary: 160 42% 25%;              /* #1B4D3E — Verde Escuro */
+  --primary: 160 42% 25%;             /* #1B4D3E — Verde Escuro */
   --primary-foreground: 0 0% 100%;
 
   --secondary: 210 17% 98%;            /* #f8f9fa — cinza claro */
@@ -99,13 +99,13 @@
   --muted: 210 17% 98%;
   --muted-foreground: 218 17% 35%;     /* #4A5568 */
 
-  --accent: 150 40% 95%;               /* #EBF5EE — verde muito suave */
-  --accent-foreground: 160 42% 25%;    /* #1B4D3E — verde escuro */
+  --accent: 166 38% 93%;               /* #e6f4f1 — verde menta suave */
+  --accent-foreground: 146 50% 27%;    /* verde menta escuro */
 
   --destructive: 358 65% 48%;          /* coral — USO RESTRITO ao RedFlagAlert */
   --destructive-foreground: 0 0% 100%;
 
-  --chart-1: 160 42% 25%;              /* #1B4D3E */
+  --chart-1: 160 42% 25%;
   --chart-2: 146 50% 36%;
   --chart-3: 214 13% 52%;
   --chart-4: 45 70% 60%;
@@ -113,12 +113,12 @@
 
   --sidebar: 0 0% 100%;
   --sidebar-foreground: 217 28% 14%;
-  --sidebar-border: 214 32% 91%;
-  --sidebar-primary: 160 42% 25%;      /* #1B4D3E */
+  --sidebar-border: 150 25% 84%;
+  --sidebar-primary: 160 42% 25%;
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 166 38% 93%;
   --sidebar-accent-foreground: 146 50% 27%;
-  --sidebar-ring: 160 42% 25%;         /* #1B4D3E */
+  --sidebar-ring: 160 42% 25%;
 
   --app-font-sans: "Open Sans", system-ui, -apple-system, sans-serif;
   --app-font-display: "Inter", system-ui, sans-serif;
