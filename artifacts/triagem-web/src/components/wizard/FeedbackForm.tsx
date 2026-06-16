@@ -60,7 +60,7 @@ export function FeedbackForm({ resultado }: Props) {
     <form
       onSubmit={handleSubmit}
       data-testid="form-feedback"
-      className="bg-white border border-[#e2e8f0] rounded-3xl p-6 md:p-8 shadow-sm"
+      className="bg-white border border-[#D1E8DA] rounded-3xl p-6 md:p-8 shadow-sm"
     >
       <h3 className="font-['Inter'] font-bold text-xl text-[#1A202C] mb-2">
         Como foi sua experiência?
@@ -113,7 +113,7 @@ export function FeedbackForm({ resultado }: Props) {
             className={`flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border-2 font-semibold text-sm transition-all ${
               util === true
                 ? "border-[#2e8b57] bg-[#e6f4f1] text-[#2e8b57]"
-                : "border-[#e2e8f0] bg-white text-[#4A5568] hover:border-[#a0aec0]"
+                : "border-[#D1E8DA] bg-white text-[#4A5568] hover:border-[#a0aec0]"
             }`}
           >
             <ThumbsUp className="w-4 h-4" /> Sim, ajudou
@@ -125,7 +125,7 @@ export function FeedbackForm({ resultado }: Props) {
             className={`flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border-2 font-semibold text-sm transition-all ${
               util === false
                 ? "border-[#dd6b20] bg-[#fffaf0] text-[#9c4221]"
-                : "border-[#e2e8f0] bg-white text-[#4A5568] hover:border-[#a0aec0]"
+                : "border-[#D1E8DA] bg-white text-[#4A5568] hover:border-[#a0aec0]"
             }`}
           >
             <ThumbsDown className="w-4 h-4" /> Não muito
@@ -149,7 +149,7 @@ export function FeedbackForm({ resultado }: Props) {
           maxLength={500}
           rows={3}
           placeholder="Conte o que funcionou bem ou o que pode melhorar."
-          className="w-full px-4 py-3 rounded-2xl border-2 border-[#e2e8f0] focus:border-[#0056b3] focus:outline-none text-sm text-[#2D3748] resize-none font-['Open_Sans']"
+          className="w-full px-4 py-3 rounded-2xl border-2 border-[#D1E8DA] focus:border-[#1B4D3E] focus:outline-none text-sm text-[#2D3748] resize-none font-['Open_Sans']"
         />
         <div className="flex justify-between items-start mt-1.5 gap-2">
           <p className="text-xs text-[#718096] leading-relaxed">
@@ -174,10 +174,11 @@ export function FeedbackForm({ resultado }: Props) {
         type="submit"
         data-testid="button-enviar-feedback"
         disabled={!canSubmit}
-        className="w-full px-6 py-3.5 bg-[#0056b3] text-white rounded-2xl font-['Inter'] font-semibold text-base hover:bg-[#004494] disabled:bg-[#cbd5e1] disabled:cursor-not-allowed active:scale-[0.99] transition-all shadow-sm"
+        className="w-full px-6 py-3.5 bg-[#1B4D3E] text-white rounded-2xl font-['Inter'] font-semibold text-base hover:bg-[#163D31] disabled:bg-[#cbd5e1] disabled:cursor-not-allowed active:scale-[0.99] transition-all shadow-sm"
       >
         {mutation.isPending ? "Enviando…" : "Enviar feedback"}
       </button>
     </form>
   );
 }
+
