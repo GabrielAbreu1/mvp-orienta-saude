@@ -112,7 +112,7 @@ export function Step0Consentimento() {
     >
       <div className="bg-[#F7FAF8] border border-[#D1E8DA] rounded-2xl p-6 md:p-8">
         <div className="flex items-start gap-3 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-[#EBF5EE] flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[#1B4D3E]/10 flex items-center justify-center flex-shrink-0">
             <Lock className="w-5 h-5 text-[#2D7A5F]" />
           </div>
           <div>
@@ -158,7 +158,7 @@ export function Step0Consentimento() {
         </label>
       </div>
 
-      <div className="bg-[#EBF5EE] border border-[#4CAF82]/30 rounded-2xl p-4 flex gap-3 items-start">
+      <div className="bg-[#EBF5EE] border border-[#4CAF82]/20 rounded-2xl p-4 flex gap-3 items-start">
         <ShieldCheck className="w-5 h-5 text-[#2D7A5F] flex-shrink-0 mt-0.5" />
         <p className="text-sm text-[#1A202C] leading-relaxed">
           Em caso de emergência, ligue <strong>192 (SAMU)</strong> imediatamente.
@@ -252,7 +252,7 @@ export function Step1Paciente() {
             />
           </button>
           {generoInfoAberto && (
-            <div className="mb-3 text-xs text-[#4A5568] leading-relaxed bg-[#EBF5EE] border border-[#4CAF82]/30 rounded-xl px-4 py-3">
+            <div className="mb-3 text-xs text-[#4A5568] leading-relaxed bg-[#EBF5EE] border border-[#2D7A5F]/20 rounded-xl px-4 py-3">
               <p><strong>Cisgênero</strong> — sua identidade de gênero é a mesma do sexo que recebeu ao nascer.</p>
               <p className="mt-1"><strong>Transgênero</strong> — sua identidade de gênero é diferente do sexo que recebeu ao nascer.</p>
             </div>
@@ -961,9 +961,9 @@ export function Step4Entrevista() {
           {analisarMutation.isPending && (
             <div
               data-testid="card-analisando"
-              className="bg-white border-2 border-[#4CAF82]/40 rounded-2xl p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm"
+              className="bg-white border-2 border-[#2D7A5F]/30 rounded-2xl p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm"
             >
-              <div className="w-14 h-14 rounded-2xl bg-[#EBF5EE] flex items-center justify-center flex-shrink-0">
+              <div className="w-14 h-14 rounded-2xl bg-[#1B4D3E]/10 flex items-center justify-center flex-shrink-0">
                 <HeartPulse className="w-7 h-7 text-[#2D7A5F] animate-pulse" />
               </div>
               <div className="flex-1">
@@ -1016,7 +1016,7 @@ const RISK_META: Record<
   low: {
     label: "Baixa urgência — autocuidado",
     bg: "bg-[#EBF5EE]",
-    border: "border-[#4CAF82]/40",
+    border: "border-[#4CAF82]/30",
     text: "text-[#22543d]",
     barra: "bg-[#4CAF82]",
   },
