@@ -27,7 +27,7 @@ export function ProgressHeader({ etapaAtual, podeVoltar, onVoltar }: Props) {
           <Link
             href="/"
             data-testid="link-home"
-            className="flex items-center gap-2 text-sm font-semibold text-[#0056b3] hover:opacity-80"
+            className="flex items-center gap-2 text-sm font-semibold text-[#1B4D3E] hover:opacity-80"
           >
             <HeartPulse className="w-5 h-5" />
             <span className="font-['Inter']">Orienta Saúde</span>
@@ -36,7 +36,7 @@ export function ProgressHeader({ etapaAtual, podeVoltar, onVoltar }: Props) {
             <button
               onClick={onVoltar}
               data-testid="button-voltar"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#4A5568] hover:text-[#0056b3] transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#4A5568] hover:text-[#1B4D3E] transition-colors"
             >
               <ArrowLeft className="w-4 h-4" /> Voltar
             </button>
@@ -45,7 +45,7 @@ export function ProgressHeader({ etapaAtual, podeVoltar, onVoltar }: Props) {
         <div className="flex items-center gap-3">
           <div className="flex-1 h-1.5 bg-[#e2e8f0] rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#0056b3] transition-all duration-300"
+              className="h-full bg-[#1B4D3E] transition-all duration-300"
               style={{ width: `${progresso}%` }}
             />
           </div>
@@ -60,3 +60,4 @@ export function ProgressHeader({ etapaAtual, podeVoltar, onVoltar }: Props) {
     </header>
   );
 }
+

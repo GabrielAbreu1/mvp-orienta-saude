@@ -58,7 +58,7 @@ const SOURCE_LABELS: Record<string, string> = {
   ai: "Inteligência Artificial",
 };
 
-const BLUE = "#0056b3";
+const BLUE = "#1B4D3E";
 const GREEN = "#2e8b57";
 const PIE_COLORS = [GREEN, "#e53e3e"];
 
@@ -75,8 +75,8 @@ function StatCard({
 }) {
   return (
     <div className="bg-white border border-[#e2e8f0] rounded-2xl p-5 shadow-sm flex items-start gap-4">
-      <div className="w-11 h-11 rounded-xl bg-[#0056b3]/10 flex items-center justify-center shrink-0">
-        <Icon className="w-5 h-5 text-[#0056b3]" />
+      <div className="w-11 h-11 rounded-xl bg-[#1B4D3E]/10 flex items-center justify-center shrink-0">
+        <Icon className="w-5 h-5 text-[#1B4D3E]" />
       </div>
       <div>
         <p className="text-2xl font-['Inter'] font-bold text-[#1A202C]">{value}</p>
@@ -121,7 +121,7 @@ export default function Stats() {
       <header className="bg-white border-b border-[#e2e8f0] shadow-sm">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <HeartPulse className="text-[#0056b3] w-6 h-6" />
+            <HeartPulse className="text-[#1B4D3E] w-6 h-6" />
             <span className="font-['Inter'] font-bold text-[#1A202C] text-lg">
               Orienta Saúde
             </span>
@@ -129,7 +129,7 @@ export default function Stats() {
           </div>
           <Link
             href="/"
-            className="flex items-center gap-2 text-sm text-[#0056b3] font-semibold hover:underline"
+            className="flex items-center gap-2 text-sm text-[#1B4D3E] font-semibold hover:underline"
           >
             <ArrowLeft className="w-4 h-4" />
             Voltar
@@ -149,7 +149,7 @@ export default function Stats() {
 
         {isLoading && (
           <div className="flex items-center justify-center py-24">
-            <div className="w-8 h-8 border-4 border-[#0056b3] border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-[#1B4D3E] border-t-transparent rounded-full animate-spin" />
           </div>
         )}
 
@@ -266,7 +266,7 @@ export default function Stats() {
               {data.porRiskLevel.length > 0 && (
                 <div className="bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-sm">
                   <h2 className="font-['Inter'] font-bold text-base text-[#1A202C] mb-4 flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-[#0056b3]" />
+                    <Activity className="w-4 h-4 text-[#1B4D3E]" />
                     Nível de urgência
                   </h2>
                   <ResponsiveContainer width="100%" height={180}>
@@ -355,7 +355,7 @@ export default function Stats() {
             {data.comentarios.length > 0 && (
               <div>
                 <h2 className="font-['Inter'] font-bold text-xl text-[#1A202C] mb-4 flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-[#0056b3]" />
+                  <MessageSquare className="w-5 h-5 text-[#1B4D3E]" />
                   Comentários dos usuários
                 </h2>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -399,3 +399,4 @@ export default function Stats() {
     </div>
   );
 }
+
