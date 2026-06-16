@@ -89,7 +89,7 @@ function PrimaryButton({
       data-testid={testId}
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-[#0056b3] text-white rounded-2xl font-['Inter'] font-semibold text-base hover:bg-[#004494] disabled:bg-[#cbd5e1] disabled:cursor-not-allowed active:scale-[0.98] transition-all shadow-sm"
+      className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-[#1B4D3E] text-white rounded-2xl font-['Inter'] font-semibold text-base hover:bg-[#163D31] disabled:bg-[#cbd5e1] disabled:cursor-not-allowed active:scale-[0.98] transition-all shadow-sm"
     >
       {children}
     </button>
@@ -110,10 +110,10 @@ export function Step0Consentimento() {
       title="Antes de começar"
       subtitle="Leia e confirme os termos abaixo. O Orienta Saúde é educativo, gratuito, e não armazena suas respostas clínicas."
     >
-      <div className="bg-[#f8f9fa] border border-[#e2e8f0] rounded-3xl p-6 md:p-8">
+      <div className="bg-[#F7FAF8] border border-[#D1E8DA] rounded-3xl p-6 md:p-8">
         <div className="flex items-start gap-3 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-[#0056b3]/10 flex items-center justify-center flex-shrink-0">
-            <Lock className="w-5 h-5 text-[#0056b3]" />
+          <div className="w-10 h-10 rounded-xl bg-[#EBF5EE] flex items-center justify-center flex-shrink-0">
+            <Lock className="w-5 h-5 text-[#2D7A5F]" />
           </div>
           <div>
             <h3 className="font-['Inter'] font-bold text-lg text-[#1A202C] mb-1">
@@ -129,13 +129,13 @@ export function Step0Consentimento() {
           </div>
         </div>
 
-        <label className="flex items-start gap-3 p-4 bg-white border border-[#e2e8f0] rounded-2xl cursor-pointer hover:border-[#0056b3]/50 transition-colors">
+        <label className="flex items-start gap-3 p-4 bg-white border border-[#D1E8DA] rounded-2xl cursor-pointer hover:border-[#2D7A5F]/50 transition-colors">
           <input
             type="checkbox"
             checked={draft.consentimentoLGPD}
             onChange={(e) => setDraft({ consentimentoLGPD: e.target.checked })}
             data-testid="checkbox-consentimento-lgpd"
-            className="mt-1 w-5 h-5 accent-[#0056b3] cursor-pointer flex-shrink-0"
+            className="mt-1 w-5 h-5 accent-[#2D7A5F] cursor-pointer flex-shrink-0"
           />
           <span className="text-sm text-[#2D3748] leading-relaxed">
             Li e concordo com o uso <strong>educativo</strong> da ferramenta, alinhado à
@@ -143,13 +143,13 @@ export function Step0Consentimento() {
           </span>
         </label>
 
-        <label className="mt-3 flex items-start gap-3 p-4 bg-white border border-[#e2e8f0] rounded-2xl cursor-pointer hover:border-[#0056b3]/50 transition-colors">
+        <label className="mt-3 flex items-start gap-3 p-4 bg-white border border-[#D1E8DA] rounded-2xl cursor-pointer hover:border-[#2D7A5F]/50 transition-colors">
           <input
             type="checkbox"
             checked={draft.consentimentoDados}
             onChange={(e) => setDraft({ consentimentoDados: e.target.checked })}
             data-testid="checkbox-consentimento-dados"
-            className="mt-1 w-5 h-5 accent-[#0056b3] cursor-pointer flex-shrink-0"
+            className="mt-1 w-5 h-5 accent-[#2D7A5F] cursor-pointer flex-shrink-0"
           />
           <span className="text-sm text-[#2D3748] leading-relaxed">
             Confirmo que tenho <strong>18 anos ou mais</strong> e que o uso é por minha
@@ -203,7 +203,7 @@ export function Step1Paciente() {
       title="Sobre você"
       subtitle="Apenas o essencial para contextualizar a orientação. Nada disso é armazenado."
     >
-      <div className="bg-white border border-[#e2e8f0] rounded-3xl p-6 md:p-8 space-y-6">
+      <div className="bg-white border border-[#D1E8DA] rounded-3xl p-6 md:p-8 space-y-6">
         <div>
           <label
             htmlFor="idade"
@@ -224,7 +224,7 @@ export function Step1Paciente() {
             }}
             data-testid="input-idade"
             placeholder="Ex.: 32"
-            className="w-full px-4 py-3 rounded-2xl border-2 border-[#e2e8f0] focus:border-[#0056b3] focus:outline-none text-base text-[#2D3748] font-['Open_Sans']"
+            className="w-full px-4 py-3 rounded-2xl border-2 border-[#D1E8DA] focus:border-[#2D7A5F] focus:outline-none text-base text-[#2D3748] font-['Open_Sans']"
           />
           {idade !== null && (idade < 18 || idade > 120) && (
             <p
@@ -243,7 +243,7 @@ export function Step1Paciente() {
           <button
             type="button"
             onClick={() => setGeneroInfoAberto((v) => !v)}
-            className="mb-3 flex items-center gap-1.5 text-xs text-[#0056b3] font-semibold hover:underline"
+            className="mb-3 flex items-center gap-1.5 text-xs text-[#2D7A5F] font-semibold hover:underline"
           >
             <Info className="w-3.5 h-3.5" />
             O que significa cisgênero / transgênero?
@@ -252,7 +252,7 @@ export function Step1Paciente() {
             />
           </button>
           {generoInfoAberto && (
-            <div className="mb-3 text-xs text-[#4A5568] leading-relaxed bg-[#f0f6ff] border border-[#0056b3]/20 rounded-xl px-4 py-3">
+            <div className="mb-3 text-xs text-[#4A5568] leading-relaxed bg-[#EBF5EE] border border-[#4CAF82]/30 rounded-xl px-4 py-3">
               <p><strong>Cisgênero</strong> — sua identidade de gênero é a mesma do sexo que recebeu ao nascer.</p>
               <p className="mt-1"><strong>Transgênero</strong> — sua identidade de gênero é diferente do sexo que recebeu ao nascer.</p>
             </div>
@@ -266,8 +266,8 @@ export function Step1Paciente() {
                 onClick={() => setPaciente({ sexo: opt.value })}
                 className={`px-4 py-3 rounded-2xl border-2 text-sm font-semibold transition-all text-left ${
                   sexo === opt.value
-                    ? "border-[#0056b3] bg-[#0056b3]/5 text-[#0056b3]"
-                    : "border-[#e2e8f0] bg-white text-[#4A5568] hover:border-[#a0aec0]"
+                    ? "border-[#2D7A5F] bg-[#EBF5EE] text-[#2D7A5F]"
+                    : "border-[#D1E8DA] bg-white text-[#4A5568] hover:border-[#a0aec0]"
                 }`}
               >
                 {opt.label}
@@ -293,7 +293,7 @@ export function Step1Paciente() {
             rows={2}
             placeholder="Ex.: hipertensão, diabetes tipo 2…"
             data-testid="input-condicoes-cronicas"
-            className="w-full px-4 py-3 rounded-2xl border-2 border-[#e2e8f0] focus:border-[#0056b3] focus:outline-none text-sm text-[#2D3748] resize-none font-['Open_Sans']"
+            className="w-full px-4 py-3 rounded-2xl border-2 border-[#D1E8DA] focus:border-[#2D7A5F] focus:outline-none text-sm text-[#2D3748] resize-none font-['Open_Sans']"
           />
         </div>
       </div>
@@ -416,7 +416,7 @@ export function Step2Sintomas() {
           onChange={(e) => setFiltro(e.target.value)}
           data-testid="input-filtro-sintomas"
           placeholder="Buscar sintoma…"
-          className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-[#e2e8f0] focus:border-[#0056b3] focus:outline-none text-sm font-['Open_Sans']"
+          className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-[#D1E8DA] focus:border-[#2D7A5F] focus:outline-none text-sm font-['Open_Sans']"
         />
       </div>
 
@@ -443,13 +443,13 @@ export function Step2Sintomas() {
                     aria-pressed={checked}
                     className={`flex items-center gap-3 px-4 py-3 rounded-2xl border-2 text-sm text-left transition-all ${
                       checked
-                        ? "border-[#0056b3] bg-[#0056b3]/5 text-[#0056b3] font-semibold"
-                        : "border-[#e2e8f0] bg-white text-[#2D3748] hover:border-[#a0aec0]"
+                        ? "border-[#2D7A5F] bg-[#EBF5EE] text-[#2D7A5F] font-semibold"
+                        : "border-[#D1E8DA] bg-white text-[#2D3748] hover:border-[#a0aec0]"
                     }`}
                   >
                     <span
                       className={`flex-shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center ${
-                        checked ? "border-[#0056b3] bg-[#0056b3]" : "border-[#cbd5e1]"
+                        checked ? "border-[#2D7A5F] bg-[#1B4D3E]" : "border-[#D1E8DA]"
                       }`}
                     >
                       {checked && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
@@ -537,8 +537,8 @@ export function Step3Regioes() {
                     aria-pressed={checked}
                     className={`px-4 py-3 rounded-2xl border-2 text-sm font-semibold transition-all ${
                       checked
-                        ? "border-[#0056b3] bg-[#0056b3]/5 text-[#0056b3]"
-                        : "border-[#e2e8f0] bg-white text-[#4A5568] hover:border-[#a0aec0]"
+                        ? "border-[#2D7A5F] bg-[#EBF5EE] text-[#2D7A5F]"
+                        : "border-[#D1E8DA] bg-white text-[#4A5568] hover:border-[#a0aec0]"
                     }`}
                   >
                     {r.label}
@@ -708,7 +708,7 @@ export function Step4Entrevista() {
     >
       {redFlag && <RedFlagAlert redFlag={redFlag} />}
 
-      <div className="bg-white border border-[#e2e8f0] rounded-3xl p-6 md:p-8 space-y-6">
+      <div className="bg-white border border-[#D1E8DA] rounded-3xl p-6 md:p-8 space-y-6">
         <h3 className="font-['Inter'] font-bold text-lg text-[#1A202C]">
           Como você está se sentindo
         </h3>
@@ -726,8 +726,8 @@ export function Step4Entrevista() {
                 onClick={() => setDraft({ duracao: opt })}
                 className={`px-3 py-3 rounded-2xl border-2 text-sm font-semibold transition-all ${
                   draft.duracao === opt
-                    ? "border-[#0056b3] bg-[#0056b3]/5 text-[#0056b3]"
-                    : "border-[#e2e8f0] bg-white text-[#4A5568] hover:border-[#a0aec0]"
+                    ? "border-[#2D7A5F] bg-[#EBF5EE] text-[#2D7A5F]"
+                    : "border-[#D1E8DA] bg-white text-[#4A5568] hover:border-[#a0aec0]"
                 }`}
               >
                 {opt}
@@ -749,8 +749,8 @@ export function Step4Entrevista() {
                 onClick={() => setDraft({ progressao: opt.value })}
                 className={`px-3 py-3 rounded-2xl border-2 text-sm font-semibold transition-all ${
                   draft.progressao === opt.value
-                    ? "border-[#0056b3] bg-[#0056b3]/5 text-[#0056b3]"
-                    : "border-[#e2e8f0] bg-white text-[#4A5568] hover:border-[#a0aec0]"
+                    ? "border-[#2D7A5F] bg-[#EBF5EE] text-[#2D7A5F]"
+                    : "border-[#D1E8DA] bg-white text-[#4A5568] hover:border-[#a0aec0]"
                 }`}
               >
                 {opt.label}
@@ -774,8 +774,8 @@ export function Step4Entrevista() {
                 }
                 className={`px-3 py-3 rounded-2xl border-2 text-sm font-semibold transition-all ${
                   draft.tipoDor === opt.value && draft.tipoDorTocado
-                    ? "border-[#0056b3] bg-[#0056b3]/5 text-[#0056b3]"
-                    : "border-[#e2e8f0] bg-white text-[#4A5568] hover:border-[#a0aec0]"
+                    ? "border-[#2D7A5F] bg-[#EBF5EE] text-[#2D7A5F]"
+                    : "border-[#D1E8DA] bg-white text-[#4A5568] hover:border-[#a0aec0]"
                 }`}
               >
                 {opt.label}
@@ -789,8 +789,8 @@ export function Step4Entrevista() {
               }
               className={`px-3 py-3 rounded-2xl border-2 text-sm font-semibold transition-all ${
                 draft.tipoDor === null && draft.tipoDorTocado
-                  ? "border-[#0056b3] bg-[#0056b3]/5 text-[#0056b3]"
-                  : "border-[#e2e8f0] bg-white text-[#4A5568] hover:border-[#a0aec0]"
+                  ? "border-[#2D7A5F] bg-[#EBF5EE] text-[#2D7A5F]"
+                  : "border-[#D1E8DA] bg-white text-[#4A5568] hover:border-[#a0aec0]"
               }`}
             >
               Não sinto dor
@@ -864,7 +864,7 @@ export function Step4Entrevista() {
       )}
 
       {fetched && draft.perguntas.length > 0 && (
-        <div className="bg-white border border-[#e2e8f0] rounded-3xl p-6 md:p-8 space-y-6">
+        <div className="bg-white border border-[#D1E8DA] rounded-3xl p-6 md:p-8 space-y-6">
           <h3 className="font-['Inter'] font-bold text-lg text-[#1A202C]">
             Perguntas adaptadas aos seus sintomas
           </h3>
@@ -886,8 +886,8 @@ export function Step4Entrevista() {
                         onClick={() => setResposta(p.id, opt)}
                         className={`px-4 py-3 rounded-2xl border-2 text-sm text-left transition-all ${
                           valorAtual === opt
-                            ? "border-[#0056b3] bg-[#0056b3]/5 text-[#0056b3] font-semibold"
-                            : "border-[#e2e8f0] bg-white text-[#4A5568] hover:border-[#a0aec0]"
+                            ? "border-[#2D7A5F] bg-[#EBF5EE] text-[#2D7A5F] font-semibold"
+                            : "border-[#D1E8DA] bg-white text-[#4A5568] hover:border-[#a0aec0]"
                         }`}
                       >
                         {opt}
@@ -961,10 +961,10 @@ export function Step4Entrevista() {
           {analisarMutation.isPending && (
             <div
               data-testid="card-analisando"
-              className="bg-white border-2 border-[#0056b3]/30 rounded-3xl p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm"
+              className="bg-white border-2 border-[#4CAF82]/40 rounded-3xl p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm"
             >
-              <div className="w-14 h-14 rounded-2xl bg-[#0056b3]/10 flex items-center justify-center flex-shrink-0">
-                <HeartPulse className="w-7 h-7 text-[#0056b3] animate-pulse" />
+              <div className="w-14 h-14 rounded-2xl bg-[#EBF5EE] flex items-center justify-center flex-shrink-0">
+                <HeartPulse className="w-7 h-7 text-[#2D7A5F] animate-pulse" />
               </div>
               <div className="flex-1">
                 <h4 className="font-['Inter'] font-bold text-base text-[#1A202C] mb-1">
@@ -975,7 +975,7 @@ export function Step4Entrevista() {
                   educativas. Isso pode levar alguns segundos — fique tranquilo,
                   não feche esta página.
                 </p>
-                <div className="flex items-center gap-2 mt-3 text-xs text-[#0056b3] font-semibold">
+                <div className="flex items-center gap-2 mt-3 text-xs text-[#2D7A5F] font-semibold">
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   Processando com inteligência artificial
                 </div>
@@ -1049,7 +1049,7 @@ export function Step5Resultado() {
   if (!resultado) {
     return (
       <StepShell title="Carregando resultado…">
-        <Loader2 className="w-8 h-8 animate-spin text-[#0056b3]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#2D7A5F]" />
       </StepShell>
     );
   }
@@ -1085,7 +1085,7 @@ export function Step5Resultado() {
       </div>
 
       {/* Especialidade */}
-      <div className="bg-white border border-[#e2e8f0] rounded-3xl p-6 md:p-8">
+      <div className="bg-white border border-[#D1E8DA] rounded-3xl p-6 md:p-8">
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-2xl bg-[#e6f4f1] text-[#2e8b57] flex items-center justify-center flex-shrink-0">
             <Stethoscope className="w-6 h-6" strokeWidth={2.2} />
@@ -1114,9 +1114,9 @@ export function Step5Resultado() {
 
       {/* Hipóteses */}
       {resultado.hipoteses.length > 0 && (
-        <div className="bg-white border border-[#e2e8f0] rounded-3xl p-6 md:p-8">
+        <div className="bg-white border border-[#D1E8DA] rounded-3xl p-6 md:p-8">
           <div className="flex items-center gap-3 mb-4">
-            <Activity className="w-5 h-5 text-[#0056b3]" />
+            <Activity className="w-5 h-5 text-[#2D7A5F]" />
             <h3 className="font-['Inter'] font-bold text-lg text-[#1A202C]">
               Possibilidades a considerar
             </h3>
@@ -1125,7 +1125,7 @@ export function Step5Resultado() {
             {resultado.hipoteses.map((h) => (
               <li
                 key={h.nome}
-                className="p-4 bg-[#f8f9fa] border border-[#e2e8f0] rounded-2xl"
+                className="p-4 bg-[#F7FAF8] border border-[#D1E8DA] rounded-2xl"
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-['Inter'] font-semibold text-[#1A202C]">
@@ -1143,7 +1143,7 @@ export function Step5Resultado() {
       )}
 
       {/* Orientações */}
-      <div className="bg-white border border-[#e2e8f0] rounded-3xl p-6 md:p-8">
+      <div className="bg-white border border-[#D1E8DA] rounded-3xl p-6 md:p-8">
         <div className="flex items-center gap-3 mb-4">
           <Sparkles className="w-5 h-5 text-[#2e8b57]" />
           <h3 className="font-['Inter'] font-bold text-lg text-[#1A202C]">
@@ -1187,14 +1187,14 @@ export function Step5Resultado() {
           type="button"
           onClick={resetar}
           data-testid="button-nova-triagem"
-          className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white border-2 border-[#e2e8f0] text-[#4A5568] hover:border-[#0056b3] hover:text-[#0056b3] rounded-2xl font-['Inter'] font-semibold text-base transition-all"
+          className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white border-2 border-[#D1E8DA] text-[#4A5568] hover:border-[#2D7A5F] hover:text-[#2D7A5F] rounded-2xl font-['Inter'] font-semibold text-base transition-all"
         >
           <RotateCcw className="w-4 h-4" /> Nova triagem
         </button>
         <Link
           href="/"
           data-testid="link-voltar-inicio"
-          className="flex-1 inline-flex items-center justify-center px-6 py-3.5 bg-[#0056b3] text-white rounded-2xl font-['Inter'] font-semibold text-base hover:bg-[#004494] active:scale-[0.98] transition-all shadow-sm"
+          className="flex-1 inline-flex items-center justify-center px-6 py-3.5 bg-[#1B4D3E] text-white rounded-2xl font-['Inter'] font-semibold text-base hover:bg-[#163D31] active:scale-[0.98] transition-all shadow-sm"
         >
           Voltar ao início
         </Link>
