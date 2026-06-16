@@ -115,7 +115,7 @@ export default function Landing() {
       </header>
 
       {/* HERO */}
-      <section className="bg-white border-b border-[#D1E8DA]">
+      <section className="border-b border-[#D1E8DA] bg-gradient-to-br from-white via-[#F0F9F4] to-[#EBF5EE]">
         <div className="max-w-5xl mx-auto px-6 pt-16 pb-20 md:pt-24 md:pb-28">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 bg-[#EBF5EE] text-[#1B4D3E] text-xs font-bold tracking-widest uppercase px-3 py-1.5 rounded-full mb-6">
