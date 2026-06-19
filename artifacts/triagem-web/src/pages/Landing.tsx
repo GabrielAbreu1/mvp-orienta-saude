@@ -46,7 +46,7 @@ function TestimonialCard({ highlight }: { highlight: Highlight }) {
       <p className="text-[#2D3748] text-sm leading-relaxed flex-1 italic">
         "{highlight.comentario}"
       </p>
-      <span className="text-xs text-[#718096]">
+      <span className="text-xs text-[#647284]">
         {new Date(highlight.data).toLocaleDateString("pt-BR", {
           month: "long",
           year: "numeric",
@@ -81,12 +81,20 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-[#F7FAF8] text-[#1A202C] font-['Open_Sans'] antialiased overflow-x-hidden">
 
+      {/* SKIP LINK — acessibilidade para navegação por teclado/leitor de tela */}
+      <a
+        href="#conteudo-principal"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-[#1B4D3E] focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-semibold"
+      >
+        Pular para o conteúdo principal
+      </a>
+
       {/* HEADER */}
       <header className="bg-white border-b border-[#D1E8DA] sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-[#1B4D3E] flex items-center justify-center">
-              <HeartPulse className="text-white w-5 h-5" />
+              <HeartPulse className="text-white w-5 h-5" aria-hidden="true" />
             </div>
             <div>
               <span className="font-['Inter'] font-bold text-lg text-[#1B4D3E] leading-none block">
@@ -98,10 +106,10 @@ export default function Landing() {
             </div>
           </div>
           <nav className="hidden md:flex gap-6 items-center">
-            <a href="#como-funciona" className="text-sm font-medium text-[#4A5568] hover:text-[#1B4D3E] transition-colors">
+            <a href="#como-funciona" className="text-sm font-medium text-[#4A5568] hover:text-[#1B4D3E] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D7A5F] focus-visible:ring-offset-2">
               Como funciona
             </a>
-            <a href="#sobre" className="text-sm font-medium text-[#4A5568] hover:text-[#1B4D3E] transition-colors">
+            <a href="#sobre" className="text-sm font-medium text-[#4A5568] hover:text-[#1B4D3E] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D7A5F] focus-visible:ring-offset-2">
               Sobre
             </a>
             <Link
@@ -115,6 +123,7 @@ export default function Landing() {
       </header>
 
       {/* HERO */}
+      <main id="conteudo-principal">
       <section className="border-b border-[#D1E8DA] bg-gradient-to-br from-white via-[#F0F9F4] to-[#EBF5EE]">
         <div className="max-w-5xl mx-auto px-6 pt-16 pb-20 md:pt-24 md:pb-28">
           <div className="max-w-2xl">
@@ -133,13 +142,13 @@ export default function Landing() {
               <Link
                 href="/entrevista"
                 data-testid="link-iniciar-hero"
-                className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#1B4D3E] text-white rounded-xl font-['Inter'] font-semibold text-base hover:bg-[#163D31] transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#1B4D3E] text-white rounded-xl font-['Inter'] font-semibold text-base hover:bg-[#163D31] transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D7A5F] focus-visible:ring-offset-2"
               >
                 Começar agora <ArrowRight className="w-4 h-4" />
               </Link>
               <a
                 href="#como-funciona"
-                className="inline-flex items-center gap-1.5 px-6 py-3.5 text-[#2D7A5F] font-semibold text-base hover:text-[#1B4D3E] transition-colors"
+                className="inline-flex items-center gap-1.5 px-6 py-3.5 text-[#2D7A5F] font-semibold text-base hover:text-[#1B4D3E] transition-colors rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D7A5F] focus-visible:ring-offset-2"
               >
                 Ver como funciona <ChevronRight className="w-4 h-4" />
               </a>
@@ -150,8 +159,8 @@ export default function Landing() {
                 { icon: Lock, text: "Dados não armazenados" },
                 { icon: Clock, text: "Cerca de 3 minutos" },
               ].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-center gap-1.5 text-xs font-semibold text-[#718096]">
-                  <Icon className="w-3.5 h-3.5 text-[#4CAF82]" />
+                <div key={text} className="flex items-center gap-1.5 text-xs font-semibold text-[#647284]">
+                  <Icon className="w-3.5 h-3.5 text-[#4CAF82]" aria-hidden="true" />
                   {text}
                 </div>
               ))}
@@ -201,14 +210,14 @@ export default function Landing() {
               >
                 <div className="flex-shrink-0">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isLast ? "bg-[#1B4D3E]" : "bg-[#EBF5EE]"}`}>
-                    <Icon className={`w-5 h-5 ${isLast ? "text-white" : "text-[#2D7A5F]"}`} strokeWidth={2.2} />
+                    <Icon className={`w-5 h-5 ${isLast ? "text-white" : "text-[#2D7A5F]"}`} strokeWidth={2.2} aria-hidden="true" />
                   </div>
                   <span className="block text-center text-[10px] font-bold text-[#A0AEC0] mt-1.5">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                 </div>
                 <div className="pt-0.5">
-                  <h4 className="font-['Inter'] font-semibold text-sm text-[#1B4D3E] mb-1">{step.title}</h4>
+                  <h3 className="font-['Inter'] font-semibold text-sm text-[#1B4D3E] mb-1">{step.title}</h3>
                   <p className="text-[#4A5568] text-xs leading-relaxed">{step.desc}</p>
                 </div>
               </div>
@@ -239,9 +248,9 @@ export default function Landing() {
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="bg-[#163D31] rounded-xl p-5 border border-[#2D7A5F]/40">
                 <div className="w-9 h-9 rounded-lg bg-[#4CAF82]/20 flex items-center justify-center mb-3">
-                  <Icon className="w-5 h-5 text-[#4CAF82]" />
+                  <Icon className="w-5 h-5 text-[#4CAF82]" aria-hidden="true" />
                 </div>
-                <h4 className="font-['Inter'] font-semibold text-sm text-white mb-1.5">{title}</h4>
+                <h3 className="font-['Inter'] font-semibold text-sm text-white mb-1.5">{title}</h3>
                 <p className="text-[#A8D5B5] text-xs leading-relaxed">{desc}</p>
               </div>
             ))}
@@ -308,18 +317,20 @@ export default function Landing() {
         </div>
       </section>
 
+      </main>
+
       {/* FOOTER */}
       <footer className="bg-[#F7FAF8] border-t border-[#D1E8DA] py-8">
         <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
             <HeartPulse className="text-[#4CAF82] w-4 h-4" />
-            <span className="text-xs text-[#718096] font-medium">
+            <span className="text-xs text-[#647284] font-medium">
               Orienta Saúde © {new Date().getFullYear()} — Projeto de extensão universitária
             </span>
           </div>
           <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-[#D1E8DA]">
             <span className="text-[10px] font-bold text-[#2D7A5F] tracking-wider uppercase">ODS 3</span>
-            <span className="text-[10px] text-[#718096]">Saúde e Bem-Estar</span>
+            <span className="text-[10px] text-[#647284]">Saúde e Bem-Estar</span>
           </div>
         </div>
       </footer>
